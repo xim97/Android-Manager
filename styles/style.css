@@ -20,10 +20,14 @@ body {
 }
 
 .lists li {
+    width: 220px;
     padding: 5px;
     border: 1px black solid;
     margin: 15px 0;
+    overflow: auto;
 }
+
+
 
 .lists li:hover {
     background-color: rgb(190, 190, 190);
