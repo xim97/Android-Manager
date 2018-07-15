@@ -20,17 +20,40 @@ body {
 }
 
 .lists li {
-    width: 220px;
+    display: flex;
+    flex-direction: column;
+    width: 420px;
     padding: 5px;
     border: 1px black solid;
     margin: 15px 0;
     overflow: auto;
 }
 
+li img {
+    height: 13px;
+    width: 13px;
+}
 
 
-.lists li:hover {
-    background-color: rgb(190, 190, 190);
+li .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;    
+}
+
+li .avatar {
+    height: 60px;
+    width: 60px;
+
+}
+
+li .buttons img {
+    margin: 0 5px;
+   
+}
+
+li .buttons img:hover {
+     background-color: rgb(190, 190, 190);
 }
 
 form {

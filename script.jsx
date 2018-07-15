@@ -41,7 +41,7 @@ class SkillList extends React.Component {
                 <span>Skills:<br /></span>
                 {
                     this.props.skills.map(function (skill) {
-                        return <span>{skill}<br /></span>
+                        return <span>{skill} </span>
                     })
                 }
             </div>
@@ -54,8 +54,9 @@ class Android extends React.Component {
     render() {
         return (
             <li>
+                <Buttons />
                 <p>{this.props.android.name}</p>
-                <img alt="avatar" />
+                <img class="avatar" />
                 <SkillList skills={this.props.android.skills} />
                 <p>Reliability:{this.props.android.reliability}</p>
                 <p>Status:{this.props.android.status}</p>
@@ -127,6 +128,7 @@ class Job extends React.Component {
     render() {
         return (
             <li>
+                <Buttons />
                 <p>Name:<br />{this.props.job.name}</p>
                 <p>Description:<br />{this.props.job.description}</p>
                 <p>Complexity:{this.props.job.complexity}</p>
@@ -170,6 +172,42 @@ class JobList extends React.Component {
                     })
                 }
             </ul>
+        );
+    }
+}
+
+class EditButton extends React.Component {
+    render() {
+        return (
+            <img src="images/edit-button.svg" />
+        );
+    }
+}
+
+class DeleteButton extends React.Component {
+    render() {
+        return (
+            <img src="images/delete-button.svg" />
+        );
+    }
+}
+
+class InformationButton extends React.Component {
+    render() {
+        return (
+            <img src="images/info-button.svg" />
+        );
+    }
+}
+
+class Buttons extends React.Component {
+    render() {
+        return (
+            <div class="buttons">
+                <InformationButton />
+                <EditButton />
+                <DeleteButton />
+            </div>
         );
     }
 }
