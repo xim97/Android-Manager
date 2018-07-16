@@ -1,10 +1,10 @@
-var androids = [{    
+var androids = [{
     name: "qwer1",
     skills: ["ghjk", "dhg", "dfgh"],
     reliability: 10,
     status: 1
 },
-{    
+{
     name: "qwer2",
     skills: ["ghjk", "dhg", "dfgh", "sfg"],
     reliability: 5,
@@ -84,9 +84,9 @@ class Android extends React.Component {
     render() {
         return (
             <li>
-                <Buttons index={this.props.index} delete={this.props.delete}/>
+                <Buttons isNeedInfoButton={false} index={this.props.index} delete={this.props.delete} />
                 <p>{this.props.android.name}</p>
-                <img class="avatar" />
+                <img class="avatar" title={'avatar of ' + this.props.android.name} src="images/1.jpg"/>
                 <SkillList skills={this.props.android.skills} />
                 <p>Reliability:{this.props.android.reliability}</p>
                 <p>Status:{this.props.android.status}</p>
@@ -153,7 +153,7 @@ class Job extends React.Component {
     render() {
         return (
             <li>
-                <Buttons index={this.props.index} delete={this.props.delete} />
+                <Buttons isNeedInfoButton={true} index={this.props.index} delete={this.props.delete} />
                 <p>Name:<br />{this.props.job.name}</p>
                 <p>Description:<br />{this.props.job.description}</p>
                 <p>Complexity:{this.props.job.complexity}</p>
@@ -221,7 +221,7 @@ class JobList extends React.Component {
 class EditButton extends React.Component {
     render() {
         return (
-            <img src="images/edit-button.svg" />
+            <img title="Edit" src="images/edit-button.svg" />
         );
     }
 }
@@ -234,7 +234,7 @@ class DeleteButton extends React.Component {
 
     render() {
         return (
-            <img onClick={this.onDeleteButtonClick} src="images/delete-button.svg" />
+            <img title="Delete" onClick={this.onDeleteButtonClick} src="images/delete-button.svg" />
         );
     }
 
@@ -247,20 +247,29 @@ class DeleteButton extends React.Component {
 class InformationButton extends React.Component {
     render() {
         return (
-            <img src="images/info-button.svg" />
+            <img title="Get information" src="images/info-button.svg" />
         );
     }
 }
 
 class Buttons extends React.Component {
     render() {
-        return (
-            <div class="buttons">
-                <InformationButton index={this.props.index} />
-                <EditButton index={this.props.index} />
-                <DeleteButton index={this.props.index} delete={this.props.delete} />
-            </div>
-        );
+        if (this.props.isNeedInfoButton) {
+            return (
+                <div class="buttons">
+                    <InformationButton index={this.props.index} />
+                    <EditButton index={this.props.index} />
+                    <DeleteButton index={this.props.index} delete={this.props.delete} />
+                </div>
+            );
+        } else {
+            return (
+                <div class="buttons">                    
+                    <EditButton index={this.props.index} />
+                    <DeleteButton index={this.props.index} delete={this.props.delete} />
+                </div>
+            ); 
+        }
     }
 }
 
