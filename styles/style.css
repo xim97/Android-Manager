@@ -65,18 +65,11 @@ form {
 
 form input {
     margin: 7px 0;
-    width: 221px;    
-}
-
-form input:hover {
-    background-color: rgb(190, 190, 190);    
+    width: 420px;    
 }
 
 form textarea {
-    width: 221px;
+    width: 420px;
     height: 90px;
 }
 
-form textarea:hover {
-    background-color: rgb(190, 190, 190);    
-}
