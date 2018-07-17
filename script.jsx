@@ -86,7 +86,7 @@ class Android extends React.Component {
             <li>
                 <Buttons isNeedInfoButton={false} index={this.props.index} delete={this.props.delete} />
                 <p>{this.props.android.name}</p>
-                <img class="avatar" title={'avatar of ' + this.props.android.name} src="images/1.jpg"/>
+                <img class="avatar" title={'avatar of ' + this.props.android.name} src="images/1.jpg" />
                 <SkillList skills={this.props.android.skills} />
                 <p>Reliability:{this.props.android.reliability}</p>
                 <p>Status:{this.props.android.status}</p>
@@ -163,12 +163,52 @@ class Job extends React.Component {
 }
 
 class JobForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { name: "", description: "", complexity: "" };
+
+        this.onChangeName = this.onChangeName.bind(this);
+        this.onChangeDescription = this.onChangeDescription.bind(this);
+        this.onChangeComplexity = this.onChangeComplexity.bind(this);
+        this.handleSubmitJob = this.handleSubmitJob.bind(this);
+    }
+    onChangeName(e) {
+        var value = e.target.value;
+        this.setState({ name: value });
+    }
+
+    onChangeDescription(e) {
+        var value = e.target.value;
+        this.setState({ description: value });
+    }
+
+    onChangeComplexity(e) {
+        var value = e.target.value;
+        this.setState({ complexity: value });
+    }
+
+    validateName(name) {
+        return true;
+    }
+
+    handleSubmitJob(e) {
+        e.preventDefault();
+        var newJob = {
+            name: this.state.name,
+            description: this.state.description,
+            complexity: this.state.complexity
+        };
+        if (this.validateName(name)) {
+            this.props.addJob(newJob);
+        }
+    }
+
     render() {
         return (
-            <form class="job-form" name="job-form">
-                <input type="text" required maxlength="16" size="16" placeholder="job name" />
-                <textarea type="text" required maxlength="255" placeholder="job description"></textarea>
-                <input type="text" required size="16" placeholder="job complexity level" />
+            <form class="job-form" onSubmit={this.handleSubmitJob} name="job-form">
+                <input type="text" value={this.state.name} onChange={this.onChangeName} required maxlength="16" placeholder="job name" />
+                <textarea type="text" value={this.state.description} onChange={this.onChangeDescription} required maxlength="255" placeholder="job description"></textarea>
+                <input type="text" value={this.state.complexity} onChange={this.onChangeComplexity} required placeholder="job complexity level" />
                 <input value="Add job" type="submit" />
             </form>
         );
@@ -176,14 +216,27 @@ class JobForm extends React.Component {
 }
 
 class Jobs extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { jobs: this.props.jobs };
+        this.addJob = this.addJob.bind(this);
+    }
+
     render() {
         return (
             <div class="jobs">
                 <h3>Jobs</h3>
-                <JobForm />
-                <JobList jobs={this.props.jobs} />
+                <JobForm addJob={this.addJob} />
+                <JobList jobs={this.state.jobs} />
             </div>
         );
+    }
+
+    addJob(newJob) {
+        var newJobList = this.state.jobs;
+        newJobList.push(newJob);
+        newJobList.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase());
+        this.setState({ jobs: newJobList })
     }
 }
 
@@ -193,7 +246,6 @@ class JobList extends React.Component {
         this.state = { jobs: this.props.jobs };
         this.deleteJob = this.deleteJob.bind(this);
     }
-
 
     render() {
         return (
@@ -264,11 +316,11 @@ class Buttons extends React.Component {
             );
         } else {
             return (
-                <div class="buttons">                    
+                <div class="buttons">
                     <EditButton index={this.props.index} />
                     <DeleteButton index={this.props.index} delete={this.props.delete} />
                 </div>
-            ); 
+            );
         }
     }
 }
