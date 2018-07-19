@@ -54,8 +54,8 @@ class AndroidManager extends React.Component {
             <div class="content">
                 <h1>Android manager</h1>
                 <div class="lists">
-                    <Jobs jobs={jobs} />
-                    <Androids androids={androids} />
+                    <Jobs />
+                    <Androids />
                 </div>
             </div>
         );
@@ -96,12 +96,56 @@ class Android extends React.Component {
 }
 
 class AndroidForm extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { name: "", skills: [], imageURL: "", reliability: 10, status: 1 };
+
+        this.onChangeName = this.onChangeName.bind(this);
+        this.onChangeSkills = this.onChangeSkills.bind(this);
+        this.handleSubmitAndroid = this.handleSubmitAndroid.bind(this);
+    }
+    onChangeName(e) {
+        var value = e.target.value.trim();
+        this.setState({ name: value });
+    }
+
+    onChangeSkills(e) {
+        var value = e.target.value.split(',');
+        value.every(item => item.trim());
+        value.filter(item => item.length > 0);
+        this.setState({ skills: value });
+    }
+
+    validateName(name) {
+        return (name.length >= 5 && name.search(/[^A-Z^a-z^\d^-]/) == -1);
+    }
+
+    handleSubmitAndroid(e) {
+        e.preventDefault();
+        var newAndroid = {
+            name: this.state.name,
+            skills: this.state.skills,
+            imageURL: this.state.imageURL,
+            reliability: this.state.reliability,
+            status: this.state.status
+        };
+        if (this.validateName(newAndroid.name)) {
+            this.props.addAndroid(newAndroid);
+            this.setState({
+                name: "",
+                skills: []
+            });
+        } else {
+            alert("Name of new android is unavaible.It should be more than 5 symbols and contain only letters, digits and hyphen.");
+        }
+    }
+
     render() {
         return (
-            <form class="android-form">
-                <input type="text" required maxlength="24" size="16" placeholder="android name" />
-                <input type="file" required accept="image/*,image/jpeg,image/png" />
-                <textarea type="text" required maxlength="255" placeholder="android skills"></textarea>
+            <form class="android-form" onSubmit={this.handleSubmitAndroid} name="android-form">
+                <input type="text" value={this.state.name} onChange={this.onChangeName} required maxlength="24" size="16" placeholder="android name" />
+                <input type="file" accept="image/*,image/jpeg,image/png" />
+                <textarea type="text" value={this.state.skills} onChange={this.onChangeSkills} required maxlength="255" placeholder="android skills"></textarea>
                 <input value="Add android" type="submit" />
             </form>
         );
@@ -109,42 +153,50 @@ class AndroidForm extends React.Component {
 }
 
 class AndroidList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { androids: this.props.androids };
-        this.deleteAndroid = this.deleteAndroid.bind(this);
-    }
 
     render() {
         return (
             <ul>
                 {
-                    this.state.androids.map(function (item, index) {
-                        return <Android index={index} delete={this.deleteAndroid} android={item} />
+                    this.props.androids.map(function (item, index) {
+                        return <Android index={index} delete={this.props.delete} android={item} />
                     }, this)
                 }
             </ul>
         );
     }
 
-    deleteAndroid(deletingAndroidIndex) {
-        var newAndroidList = this.state.androids.filter((item, index) => {
-            return (index != deletingAndroidIndex)
-        });
-
-        this.setState({ androids: newAndroidList });
-    }
 }
 
 class Androids extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { androids: androids };
+        this.addAndroid = this.addAndroid.bind(this);
+        this.deleteAndroid = this.deleteAndroid.bind(this);
+    }
+
     render() {
         return (
             <div class="androids">
                 <h3>Androids</h3>
-                <AndroidForm />
-                <AndroidList androids={this.props.androids} />
+                <AndroidForm addAndroid={this.addAndroid} />
+                <AndroidList delete={this.deleteAndroid} androids={this.state.androids} />
             </div>
         );
+    }
+
+    addAndroid(newAndroid) {
+        var newAndroidList = this.state.androids;
+        newAndroidList.unshift(newAndroid);
+        this.setState({ androids: newAndroidList })
+    }
+
+    deleteAndroid(deletingAndroidIndex) {
+        var newAndroidList = this.state.androids.filter((item, index) => {
+            return (index != deletingAndroidIndex)
+        });        
+        this.setState({ androids: newAndroidList });
     }
 }
 
@@ -173,7 +225,7 @@ class JobForm extends React.Component {
         this.handleSubmitJob = this.handleSubmitJob.bind(this);
     }
     onChangeName(e) {
-        var value = e.target.value;
+        var value = e.target.value.trim();
         this.setState({ name: value });
     }
 
@@ -183,12 +235,12 @@ class JobForm extends React.Component {
     }
 
     onChangeComplexity(e) {
-        var value = e.target.value;
+        var value = e.target.value.trim();
         this.setState({ complexity: value });
     }
 
     validateName(name) {
-        return true;
+        return (name.length >= 2 && name.search(/[^A-Z^a-z^\d^-]/) == -1);
     }
 
     handleSubmitJob(e) {
@@ -198,8 +250,15 @@ class JobForm extends React.Component {
             description: this.state.description,
             complexity: this.state.complexity
         };
-        if (this.validateName(name)) {
+        if (this.validateName(newJob.name)) {
             this.props.addJob(newJob);
+            this.setState({
+                name: "",
+                description: "",
+                complexity: ""
+            });
+        } else {
+            alert("Name of new job is unavaible.It should be more than 2 symbols and contain only letters, digits and hyphen.");
         }
     }
 
@@ -218,8 +277,9 @@ class JobForm extends React.Component {
 class Jobs extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { jobs: this.props.jobs };
+        this.state = { jobs: jobs };
         this.addJob = this.addJob.bind(this);
+        this.deleteJob = this.deleteJob.bind(this);
     }
 
     render() {
@@ -227,46 +287,40 @@ class Jobs extends React.Component {
             <div class="jobs">
                 <h3>Jobs</h3>
                 <JobForm addJob={this.addJob} />
-                <JobList jobs={this.state.jobs} />
+                <JobList delete={this.deleteJob} jobs={this.state.jobs} />
             </div>
         );
     }
 
     addJob(newJob) {
         var newJobList = this.state.jobs;
-        newJobList.push(newJob);
-        newJobList.sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase());
+        newJobList.unshift(newJob);
         this.setState({ jobs: newJobList })
     }
+
+    deleteJob(deletingJobIndex) {
+        var newJobList = this.state.jobs;
+        newJobList = newJobList.filter((item, index) => {
+            return (index != deletingJobIndex)
+        });
+        this.setState({ jobs: newJobList });
+    }
+
 }
 
 class JobList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { jobs: this.props.jobs };
-        this.deleteJob = this.deleteJob.bind(this);
-    }
 
     render() {
         return (
             <ul>
                 {
-                    this.state.jobs.map(function (item, index) {
-                        return <Job index={index} delete={this.deleteJob} job={item} />
+                    this.props.jobs.map(function (item, index) {
+                        return <Job index={index} delete={this.props.delete} job={item} />
                     }, this)
                 }
             </ul>
         );
     }
-
-    deleteJob(deletingJobIndex) {
-        var newJobList = this.state.jobs.filter((item, index) => {
-            return (index != deletingJobIndex)
-        });
-
-        this.setState({ jobs: newJobList });
-    }
-
 
 }
 
